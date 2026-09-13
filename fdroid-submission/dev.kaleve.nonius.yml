@@ -3,8 +3,8 @@
 #
 # This file belongs in the fdroiddata repository, not in this app repo. The
 # copy here is a read-only snapshot kept for reference; editing it changes
-# nothing. Submitted as a merge request against:
-#   https://gitlab.com/fdroid/fdroiddata
+# nothing. Original submission:
+#   https://gitlab.com/fdroid/fdroiddata/-/merge_requests/48782
 #
 # Because AutoUpdateMode is Version, the F-Droid bot appends a build entry and
 # bumps CurrentVersion on its own every time a new tag lands, so this snapshot
