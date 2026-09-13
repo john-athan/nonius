@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The window is transparent because Compose draws edge to edge and paints
+         the paper itself. The only job left for the platform theme is to not
+         flash a white rectangle before the first frame. -->
+    <style name="Theme.Nonius" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FFF8F5EF</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+</resources>

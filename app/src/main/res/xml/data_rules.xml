@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nothing leaves the device, not even into a backup. The six numbers the app
+     keeps are calibrations of this one piece of hardware, so they would be
+     wrong on the next phone anyway. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" path="." />
+    </device-transfer>
+</data-extraction-rules>

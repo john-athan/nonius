@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A vial with the bubble dead centre: the one thing every instrument in here
+     is for. Drawn inside the 66dp safe zone of the 108dp adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path
+        android:pathData="M36,45 h36 a9,9 0 0 1 0,18 h-36 a9,9 0 0 1 0,-18 z"
+        android:strokeColor="#241E1A" android:strokeWidth="2.6" />
+    <path android:pathData="M49.5,44 v20" android:strokeColor="#241E1A" android:strokeWidth="2.2" />
+    <path android:pathData="M58.5,44 v20" android:strokeColor="#241E1A" android:strokeWidth="2.2" />
+    <path android:pathData="M54,48 a6,6 0 1 1 0,12 a6,6 0 1 1 0,-12 z" android:fillColor="#C45400" />
+</vector>
