@@ -40,6 +40,16 @@ image loader, no font file, no database. Compose, the activity, and the
 lifecycle bridge for collecting sensor flows. That is the whole dependency list,
 and the release APK is about 1.5 MiB.
 
+## Screenshots
+
+<p float="left">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="19%" alt="The case" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="19%" alt="Level" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="19%" alt="Compass" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="19%" alt="Ruler" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="19%" alt="Light meter" />
+</p>
+
 ## Building
 
 Requirements: JDK 21, Android SDK 36, Gradle (wrapper included).
