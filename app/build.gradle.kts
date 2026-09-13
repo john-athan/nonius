@@ -54,7 +54,7 @@ dependencies {
     // Used directly by sensor/ and data/, so it is declared rather than taken
     // on loan from lifecycle. This is the version the graph already resolved,
     // so declaring it changes nothing in the APK except the honesty.
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     // Everything under core/ is plain Kotlin: no Android import, no device, no
