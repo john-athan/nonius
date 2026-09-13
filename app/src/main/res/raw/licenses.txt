@@ -7,10 +7,18 @@ and the full license text follow.
   androidx.compose (ui, ui-graphics, foundation, animation)
   androidx.activity:activity-compose
   androidx.lifecycle:lifecycle-runtime-compose
+  and the AndroidX libraries those depend on
       Copyright (c) The Android Open Source Project
 
-  Kotlin standard library, kotlinx.coroutines
+  Kotlin standard library, kotlinx.coroutines, kotlinx.serialization
+  org.jetbrains:annotations
       Copyright (c) JetBrains s.r.o.
+
+  com.google.guava:listenablefuture
+      Copyright (c) The Guava Authors
+
+  org.jspecify:jspecify
+      Copyright (c) The JSpecify Authors
 
 
                                  Apache License
