@@ -58,8 +58,15 @@ jobs:
           printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
           apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
           cp app/build/outputs/apk/release/app-release-unsigned.apk "nonius-$version.apk"
+          # Both flags are what makes the signature copyable. F-Droid lifts the
+          # signing block off this file and puts it on its own build, so the zip
+          # underneath has to stay exactly as Gradle wrote it. Without
+          # --v1-signing-enabled false apksigner adds three META-INF entries and
+          # moves everything after them; without --alignment-preserved true it
+          # re-aligns three more. minSdk is 36, so v1 signing buys nothing.
           "$apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias nonius \
             --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD \
+            --v1-signing-enabled false --alignment-preserved true \
             "nonius-$version.apk"
           rm -f "$RUNNER_TEMP/release.jks"
           gh release upload "$GITHUB_REF_NAME" "nonius-$version.apk" --clobber
