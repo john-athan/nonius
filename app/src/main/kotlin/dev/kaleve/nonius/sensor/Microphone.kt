@@ -51,17 +51,30 @@ fun Context.audioFrames(sampleRate: Int = SAMPLE_RATE, frame: Int = FRAME_SIZE):
         val minimum = AudioRecord.getMinBufferSize(
             sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT,
         )
-        val record = AudioRecord.Builder()
-            .setAudioSource(source)
-            .setAudioFormat(
-                AudioFormat.Builder()
-                    .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-                    .setSampleRate(sampleRate)
-                    .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
-                    .build()
-            )
-            .setBufferSizeInBytes(maxOf(minimum, frame * 8))
-            .build()
+        // The microphone can be held by another app, missing behind a broken
+        // HAL, or refuse this exact configuration, and the permission grant
+        // rules out none of that. Any of it ends the flow the way an absent
+        // sensor does, rather than crashing on a build() or startRecording()
+        // that an unavailable device cannot serve.
+        val record = try {
+            AudioRecord.Builder()
+                .setAudioSource(source)
+                .setAudioFormat(
+                    AudioFormat.Builder()
+                        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
+                        .build()
+                )
+                .setBufferSizeInBytes(maxOf(minimum, frame * 8))
+                .build()
+        } catch (unsupported: UnsupportedOperationException) {
+            return@flow
+        }
+        if (record.state != AudioRecord.STATE_INITIALIZED) {
+            record.release()
+            return@flow
+        }
 
         try {
             record.startRecording()
