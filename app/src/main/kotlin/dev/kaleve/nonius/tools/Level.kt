@@ -1,17 +1,23 @@
 package dev.kaleve.nonius.tools
 
+import android.content.pm.ActivityInfo
 import android.hardware.Sensor
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,9 +32,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import dev.kaleve.nonius.core.Posture
+import dev.kaleve.nonius.core.PostureLatch
 import dev.kaleve.nonius.core.Slope
 import dev.kaleve.nonius.core.Tilt
 import dev.kaleve.nonius.core.isLevel
+import dev.kaleve.nonius.core.postureFromGravity
 import dev.kaleve.nonius.data.rememberSetting
 import dev.kaleve.nonius.sensor.rememberReading
 import dev.kaleve.nonius.ui.Action
@@ -59,6 +68,31 @@ fun LevelScreen(onBack: () -> Unit) {
     val live = (raw ?: Tilt.Level) - Tilt(zeroPitch, zeroRoll)
     val tilt = held ?: live
 
+    // Which way the device is held decides both which face is shown and which
+    // axis the tube reads. A latch so a brief flick through another posture on
+    // the way to where the phone is going does not count.
+    val latch = remember { PostureLatch() }
+    var posture by remember { mutableStateOf(latch.posture) }
+    LaunchedEffect(reading) {
+        val gravity = reading ?: return@LaunchedEffect
+        val candidate = postureFromGravity(gravity[0], gravity[1], gravity[2], latch.posture)
+        posture = latch.update(candidate, System.currentTimeMillis())
+    }
+
+    // A rotation lock must not stop the level from turning, so this screen
+    // asks for its own orientation while it is open and gives it back on the
+    // way out, the way Instrument already gives keepScreenOn back.
+    val activity = LocalActivity.current
+    DisposableEffect(Unit) {
+        onDispose { activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
+    }
+    LaunchedEffect(posture) {
+        activity?.requestedOrientation = when (posture) {
+            Posture.LandscapeLeft, Posture.LandscapeRight -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            Posture.PortraitUp, Posture.PortraitDown -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        }
+    }
+
     // The bubble has mass. Critically damped, so it settles without wobbling
     // around the mark like a cheap animation.
     val shownPitch by animateFloatAsState(
@@ -67,6 +101,15 @@ fun LevelScreen(onBack: () -> Unit) {
     val shownRoll by animateFloatAsState(
         tilt.roll, spring(1f, Spring.StiffnessMedium), label = "roll",
     )
+    // The tube reads whichever axis runs across the screen in this posture,
+    // not always roll: rotate the device and the screen's own horizontal
+    // direction is a different device axis. See core/Posture.kt.
+    val vial = when (posture) {
+        Posture.PortraitUp -> shownRoll
+        Posture.PortraitDown -> -shownRoll
+        Posture.LandscapeRight -> -shownPitch
+        Posture.LandscapeLeft -> shownPitch
+    }
 
     val level = tilt.isLevel()
     val haptics = LocalHapticFeedback.current
@@ -90,19 +133,37 @@ fun LevelScreen(onBack: () -> Unit) {
             Action("Hold", latched = held != null) { held = if (held == null) live else null }
         },
     ) {
-        Bullseye(
-            shownPitch, shownRoll, level,
-            Modifier.fillMaxWidth().aspectRatio(1f).padding(vertical = 8.dp),
-        )
-        Vial(shownRoll, level, Modifier.fillMaxWidth().height(46.dp).padding(top = 8.dp))
-        Row(
-            Modifier.fillMaxWidth().padding(top = 22.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Reading(unit.format(tilt.pitch), unit.suffix, "pitch", emphasis = level)
-            Reading(unit.format(tilt.roll), unit.suffix, "roll", emphasis = level)
+        // The window the app actually has decides the face, not the sensor:
+        // that way a foldable or a split screen gets the right one for free.
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            if (maxWidth > maxHeight) {
+                Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                    Vial(vial, level, Modifier.fillMaxWidth().height(64.dp))
+                    Readings(unit, tilt, level, Modifier.fillMaxWidth().padding(top = 22.dp))
+                }
+            } else {
+                Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                    Bullseye(
+                        shownPitch, shownRoll, level,
+                        Modifier.fillMaxWidth().aspectRatio(1f).padding(vertical = 8.dp),
+                    )
+                    Vial(vial, level, Modifier.fillMaxWidth().height(46.dp).padding(top = 8.dp))
+                    Readings(unit, tilt, level, Modifier.fillMaxWidth().padding(top = 22.dp))
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun Readings(unit: Slope, tilt: Tilt, level: Boolean, modifier: Modifier) {
+    Row(
+        modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        Reading(unit.format(tilt.pitch), unit.suffix, "pitch", emphasis = level)
+        Reading(unit.format(tilt.roll), unit.suffix, "roll", emphasis = level)
     }
 }
 
@@ -160,9 +221,13 @@ private fun Bullseye(pitch: Float, roll: Float, level: Boolean, modifier: Modifi
     }
 }
 
-/** The tube, for the last tenth of a degree once the round vial is centred. */
+/**
+ * The tube, for the last tenth of a degree once the round vial is centred. The
+ * value is whichever axis runs across the screen in the current posture, not
+ * always roll: see [LevelScreen]'s `vial`.
+ */
 @Composable
-private fun Vial(roll: Float, level: Boolean, modifier: Modifier) {
+private fun Vial(deflection: Float, level: Boolean, modifier: Modifier) {
     val rule2 = palette.rule2
     val ink2 = palette.ink2
     val ink3 = palette.ink3
@@ -178,7 +243,7 @@ private fun Vial(roll: Float, level: Boolean, modifier: Modifier) {
         val bubble = radius * 0.72f
         val travel = size.width / 2 - radius - bubble * 0.4f
         val centre = Offset(
-            size.width / 2 + (roll / VIAL_RANGE).coerceIn(-1f, 1f) * travel,
+            size.width / 2 + (deflection / VIAL_RANGE).coerceIn(-1f, 1f) * travel,
             radius,
         )
         var tick = -10

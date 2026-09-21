@@ -21,7 +21,7 @@ calibrate this one device.
 
 | Tool | Reads | Sensor | Notes |
 | --- | --- | --- | --- |
-| Level | pitch and roll | gravity | round vial and tube, zero point per device, degrees, percent or mm/m |
+| Level | pitch and roll | gravity | round vial and tube, zero point per device, degrees, percent or mm/m, turns to the landscape face on its own even under a locked rotation |
 | Compass | heading and field | rotation vector, magnetometer | the same face doubles as a metal detector |
 | Ruler | millimetres, inches | none | calibrated against a bank card, not against the panel's own claim |
 | Sound level | dB(Z) | microphone | asks for the unprocessed source so gain control cannot rewrite the number |
