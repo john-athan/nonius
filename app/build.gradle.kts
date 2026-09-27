@@ -13,8 +13,8 @@ android {
         // Android 16, so there are no version guards anywhere in the source.
         minSdk        = 36
         targetSdk     = 36
-        versionCode   = 4
-        versionName   = "1.2"
+        versionCode   = 5
+        versionName   = "1.3"
     }
 
     buildTypes {
