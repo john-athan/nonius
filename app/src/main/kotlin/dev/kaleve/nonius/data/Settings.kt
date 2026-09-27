@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
@@ -17,8 +19,9 @@ import kotlinx.coroutines.flow.drop
 
 /**
  * Everything the app remembers: a zero point per device, a screen correction, a
- * microphone offset, a concert pitch, a count. Six numbers, so the store is the
- * one the platform already has and there is no database in the build.
+ * microphone offset and weighting, a declination and a north reference, a
+ * concert pitch, a count. So the store is the one the platform already has and
+ * there is no database in the build.
  */
 private const val FILE = "nonius"
 
@@ -47,6 +50,17 @@ fun rememberSetting(key: String, default: Int): MutableIntState {
     val state = remember(key) { mutableIntStateOf(store.getInt(key, default)) }
     LaunchedEffect(key) {
         snapshotFlow { state.value }.drop(1).collectLatest { store.edit().putInt(key, it).apply() }
+    }
+    return state
+}
+
+/** A toggle, the same immediacy as the counter: a tap is not a drag to settle. */
+@Composable
+fun rememberSetting(key: String, default: Boolean): MutableState<Boolean> {
+    val store = store()
+    val state = remember(key) { mutableStateOf(store.getBoolean(key, default)) }
+    LaunchedEffect(key) {
+        snapshotFlow { state.value }.drop(1).collectLatest { store.edit().putBoolean(key, it).apply() }
     }
     return state
 }

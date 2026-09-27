@@ -16,10 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.kaleve.nonius.core.AWeighting
 import dev.kaleve.nonius.core.DEFAULT_SPL_OFFSET_DB
 import dev.kaleve.nonius.core.rms
 import dev.kaleve.nonius.core.soundPressureLevel
 import dev.kaleve.nonius.data.rememberSetting
+import dev.kaleve.nonius.sensor.SAMPLE_RATE
 import dev.kaleve.nonius.sensor.rememberMicrophone
 import dev.kaleve.nonius.ui.Action
 import dev.kaleve.nonius.ui.Adjuster
@@ -38,11 +40,18 @@ fun SoundScreen(onBack: () -> Unit) {
     val microphone = rememberMicrophone()
     val frame = rememberAudioFrame(microphone.granted)
     var offset by rememberSetting("sound.offset", DEFAULT_SPL_OFFSET_DB)
+    var weighted by rememberSetting("sound.weighted", true)
     var calibrating by rememberSaveable { mutableStateOf(false) }
+    // Kept running regardless of the toggle, so switching from Z to A never
+    // shows the settling transient of a filter that has been sitting idle.
+    val filter = remember { AWeighting(SAMPLE_RATE) }
     var peak by remember { mutableFloatStateOf(0f) }
     var trace by remember { mutableStateOf(FloatArray(0)) }
 
-    val level = frame?.let { soundPressureLevel(rms(it.samples), offset) }
+    val level = frame?.let {
+        val aWeighted = rms(FloatArray(it.samples.size) { i -> filter.process(it.samples[i]) })
+        soundPressureLevel(if (weighted) aWeighted else rms(it.samples), offset)
+    }
     LaunchedEffect(frame) {
         val reading = level ?: return@LaunchedEffect
         peak = max(peak, reading)
@@ -50,6 +59,7 @@ fun SoundScreen(onBack: () -> Unit) {
         trace = kept + reading
     }
 
+    val unit = if (weighted) "dB(A)" else "dB(Z)"
     Instrument(
         title = "Sound level",
         onBack = onBack,
@@ -57,11 +67,12 @@ fun SoundScreen(onBack: () -> Unit) {
         footnote = when {
             !microphone.granted -> null
             frame == null -> "opening the microphone"
-            frame.unprocessed -> "Unweighted, dB(Z). Set the offset against a meter you trust."
+            frame.unprocessed -> "Set the offset against a meter you trust, at 1 kHz or with broadband noise."
             else -> "This device applies gain control, so the reading drifts under it."
         },
         actions = {
             if (microphone.granted) {
+                Action(unit, latched = weighted) { weighted = !weighted }
                 Action("Calibrate", latched = calibrating) { calibrating = !calibrating }
                 Action("Reset peak") { peak = 0f; trace = FloatArray(0) }
             } else {
@@ -83,11 +94,11 @@ fun SoundScreen(onBack: () -> Unit) {
         ) {
             Reading(
                 level?.let { String.format(Locale.US, "%.1f", it) } ?: "--",
-                "dB", "now",
+                unit, "now",
             )
             Reading(
                 if (peak > 0f) String.format(Locale.US, "%.1f", peak) else "--",
-                "dB", "peak", style = Type.readingSmall,
+                unit, "peak", style = Type.readingSmall,
             )
         }
         Trace(

@@ -14,8 +14,10 @@ gap are mostly a banner ad with a bubble drawn on top.
 
 Nonius is the other kind: every face is drawn as an instrument rather than
 assembled out of stock components, every reading that depends on hardware has a
-calibration you can set, and nothing is stored beyond the six numbers that
-calibrate this one device.
+calibration you can set, and nothing is stored beyond what calibrates this one
+device and remembers its settings: the level's zero point, the ruler's
+correction, the sound meter's offset and its A- or Z-weighting choice, the
+tuner's concert pitch, the altimeter's reference pressure, and the tally count.
 
 ## The instruments
 
@@ -24,7 +26,7 @@ calibrate this one device.
 | Level | pitch and roll | gravity | round vial and tube, zero point per device, degrees, percent or mm/m, turns to the landscape face on its own even under a locked rotation |
 | Compass | heading and field | rotation vector, magnetometer | the same face doubles as a metal detector |
 | Ruler | millimetres, inches | none | calibrated against a bank card, not against the panel's own claim |
-| Sound level | dB(Z) | microphone | asks for the unprocessed source so gain control cannot rewrite the number |
+| Sound level | dB(A) or dB(Z) | microphone | A-weighted by default, Z for the unweighted reading; asks for the unprocessed source so gain control cannot rewrite the number; calibrate the offset at 1 kHz or with broadband noise, since it holds for either weighting |
 | Tuner | pitch and cents | microphone | YIN detection, concert pitch adjustable from 415 to 466 Hz |
 | Counter | a tally | none | tap anywhere, survives being closed |
 | Altimeter | height and weather | barometer | height above a mark you set, which is exact enough to measure a staircase |
