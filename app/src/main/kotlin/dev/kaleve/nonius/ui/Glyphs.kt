@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 
-/** The eight marks on the lids of the case. Drawn, so they cost nothing and scale. */
-enum class Glyph { Vial, Rose, Rule, Wave, Fork, Counter, Barometer, Sun }
+/** The marks on the lids of the case. Drawn, so they cost nothing and scale. */
+enum class Glyph { Vial, Rose, Rule, Wave, Fork, Counter, Barometer, Sun, Metronome }
 
 @Composable
 fun ToolGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = palette.ink) {
@@ -87,6 +87,19 @@ fun ToolGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = palett
                 seg(3f, 12f, 6f, 12f); seg(18f, 12f, 21f, 12f)
                 seg(5.6f, 5.6f, 7.7f, 7.7f); seg(16.3f, 16.3f, 18.4f, 18.4f)
                 seg(18.4f, 5.6f, 16.3f, 7.7f); seg(7.7f, 16.3f, 5.6f, 18.4f)
+            }
+
+            Glyph.Metronome -> {
+                drawPath(
+                    Path().apply {
+                        moveTo(7f * u, 20f * u); lineTo(10f * u, 5f * u)
+                        lineTo(14f * u, 5f * u); lineTo(17f * u, 20f * u); close()
+                    },
+                    color, style = stroke,
+                )
+                seg(7f, 20f, 17f, 20f)
+                seg(12f, 17f, 15f, 7f)
+                drawCircle(color, 1.3f * u, at(14.3f, 10.4f), style = stroke)
             }
         }
     }

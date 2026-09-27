@@ -1,6 +1,6 @@
 # Nonius
 
-Eight measuring instruments Android does not ship with, in one app of about a
+Nine measuring instruments Android does not ship with, in one app of about a
 megabyte and a half, with no network permission at all.
 
 No ads. No trackers. No analytics. One permission, the microphone, asked for
@@ -18,7 +18,8 @@ calibration you can set, and nothing is stored beyond what calibrates this one
 device and remembers its settings: the level's zero point, the ruler's
 correction, the sound meter's offset and its A- or Z-weighting choice, the
 compass's declination and its true- or magnetic-north choice, the tuner's
-concert pitch, the altimeter's reference pressure, and the tally count.
+concert pitch, the altimeter's reference pressure, the tally count, and the
+metronome's tempo and beats per bar.
 
 ## The instruments
 
@@ -32,6 +33,7 @@ concert pitch, the altimeter's reference pressure, and the tally count.
 | Counter | a tally | none | tap anywhere, survives being closed |
 | Altimeter | height and weather | barometer | height above a mark you set, which is exact enough to measure a staircase |
 | Light meter | lux | light sensor | six decades, from moonlight to direct sun |
+| Metronome | beat and tempo | none | BPM 30 to 250, beats per bar 1 to 12 with beat one accented, sample-accurate clicks from an AudioTrack fed by a running sample counter rather than a timer |
 
 Tools whose sensor the device does not have are shown greyed out with the
 reason, rather than opening and then apologising.
@@ -79,7 +81,7 @@ app/src/main/kotlin/dev/kaleve/nonius/
   data/       six settings on SharedPreferences
   ui/         palette, type, the kit every instrument is drawn from
   tools/      one file per instrument
-  Tools.kt    the registry: a ninth instrument is a file and a line here
+  Tools.kt    the registry: a tenth instrument is a file and a line here
 ```
 
 Everything in `core/` runs on the JVM without a device and without Robolectric,

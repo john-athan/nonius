@@ -82,7 +82,7 @@ fun Modifier.press(enabled: Boolean = true, onClick: () -> Unit): Modifier =
 /**
  * The frame every tool sits in: title, a rule, the instrument itself, and the
  * actions along the bottom where a thumb already is. Nothing else draws chrome,
- * which is why all eight screens feel like one case of tools.
+ * which is why every screen feels like one case of tools.
  */
 @Composable
 fun Instrument(

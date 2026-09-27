@@ -10,6 +10,7 @@ import dev.kaleve.nonius.tools.AltimeterScreen
 import dev.kaleve.nonius.tools.CompassScreen
 import dev.kaleve.nonius.tools.LevelScreen
 import dev.kaleve.nonius.tools.LightScreen
+import dev.kaleve.nonius.tools.MetronomeScreen
 import dev.kaleve.nonius.tools.RulerScreen
 import dev.kaleve.nonius.tools.SoundScreen
 import dev.kaleve.nonius.tools.TallyScreen
@@ -50,8 +51,8 @@ class Tool(
 )
 
 /**
- * The whole app, in one list. A ninth instrument is a file and a line here; the
- * case, the navigation and the back gesture never learn its name.
+ * The whole app, in one list. A tenth instrument is a file and a line here;
+ * the case, the navigation and the back gesture never learn its name.
  */
 val Tools: List<Tool> = listOf(
     Tool(
@@ -74,4 +75,5 @@ val Tools: List<Tool> = listOf(
         "light", "Light meter", "lux", Glyph.Sun,
         Needs.Sense(Sensor.TYPE_LIGHT, "no light sensor"),
     ) { LightScreen(it) },
+    Tool("metronome", "Metronome", "tempo", Glyph.Metronome, Needs.Nothing) { MetronomeScreen(it) },
 )
