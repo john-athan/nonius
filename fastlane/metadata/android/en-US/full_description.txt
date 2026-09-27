@@ -13,6 +13,7 @@ Nonius is the other kind. Every face is drawn as an instrument rather than assem
 • <b>Altimeter</b>, height above a mark you set, exact enough to measure a staircase, with the pressure trend
 • <b>Light meter</b>, lux across six decades, from moonlight to direct sun
 • <b>Metronome</b>, BPM 30 to 250 and beats per bar 1 to 12 with the first beat accented, sample-accurate clicks
+• <b>G-force</b>, the magnitude of the three accelerometer axes against standard gravity, with peak hold
 
 Instruments your device has no sensor for are shown greyed out with the reason, instead of opening and then apologising.
 

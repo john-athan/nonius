@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 
 /** The marks on the lids of the case. Drawn, so they cost nothing and scale. */
-enum class Glyph { Vial, Rose, Rule, Wave, Fork, Counter, Barometer, Sun, Metronome }
+enum class Glyph { Vial, Rose, Rule, Wave, Fork, Counter, Barometer, Sun, Metronome, Gforce }
 
 @Composable
 fun ToolGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = palette.ink) {
@@ -100,6 +100,14 @@ fun ToolGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = palett
                 seg(7f, 20f, 17f, 20f)
                 seg(12f, 17f, 15f, 7f)
                 drawCircle(color, 1.3f * u, at(14.3f, 10.4f), style = stroke)
+            }
+
+            Glyph.Gforce -> {
+                drawArc(
+                    color, 145f, 250f, false, at(2.5f, 2.5f), Size(19f * u, 19f * u), style = stroke,
+                )
+                seg(12f, 12f, 17f, 6.5f)
+                drawCircle(color, 1.6f * u, at(12f, 12f), style = stroke)
             }
         }
     }
