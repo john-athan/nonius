@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -268,12 +267,6 @@ fun Adjuster(
         }
     }
 }
-
-/** Tap anywhere, for the tools whose whole face is the control. */
-fun Modifier.tapTarget(onTap: () -> Unit, onLongPress: (() -> Unit)? = null) =
-    pointerInput(onTap, onLongPress) {
-        detectTapGestures(onTap = { onTap() }, onLongPress = onLongPress?.let { press -> { _: Offset -> press() } })
-    }
 
 fun Float.roundTo(step: Float) = (this / step).roundToInt() * step
 
