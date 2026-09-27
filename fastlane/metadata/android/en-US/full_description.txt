@@ -5,7 +5,7 @@ Nonius is the other kind. Every face is drawn as an instrument rather than assem
 <b>The instruments</b>
 
 • <b>Level</b>, a round vial and a tube at once, with a zero point stored for your device, in degrees, percent or millimetres per metre
-• <b>Compass</b>, heading and field strength, and the same face doubles as a metal detector for finding a nail behind plaster
+• <b>Compass</b>, heading and field strength, true north from a declination you set since there is no location permission to find it for you, and the same face doubles as a metal detector for finding a nail behind plaster
 • <b>Ruler</b>, millimetres and inches, calibrated against a bank card rather than against the pixel density the panel claims
 • <b>Sound level</b>, in dB(A) or dB(Z), with peak and minimum hold, asking the device for the unprocessed microphone so that gain control cannot rewrite the number
 • <b>Tuner</b>, note and cents by YIN pitch detection, concert pitch adjustable from 415 to 466 Hz

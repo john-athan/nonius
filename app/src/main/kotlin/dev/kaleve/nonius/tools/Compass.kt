@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.kaleve.nonius.data.rememberSetting
 import dev.kaleve.nonius.sensor.rememberReading
 import dev.kaleve.nonius.ui.Action
+import dev.kaleve.nonius.ui.Adjuster
 import dev.kaleve.nonius.ui.Instrument
 import dev.kaleve.nonius.ui.Reading
 import dev.kaleve.nonius.ui.Type
@@ -56,6 +59,9 @@ fun CompassScreen(onBack: () -> Unit) {
     val field = rememberReading(Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_UI)
     var held by remember { mutableStateOf<Float?>(null) }
     var metal by remember { mutableStateOf(false) }
+    var declination by rememberSetting("compass.declination", 0f)
+    var trueNorth by rememberSetting("compass.true", false)
+    var settingDeclination by rememberSaveable { mutableStateOf(false) }
 
     val heading = rotation?.let { headingOf(it.values) }
     val strength = field?.let { sqrt(it[0] * it[0] + it[1] * it[1] + it[2] * it[2]) }
@@ -78,7 +84,10 @@ fun CompassScreen(onBack: () -> Unit) {
     }
     val swing = if (strength == null || baseline.isNaN()) 0f else strength - baseline
 
-    val bearing = ((shown % 360f) + 360f) % 360f
+    // The rose and the readout turn together: a bezel set to the declination,
+    // not a second number bolted on beside the first.
+    val magneticBearing = ((shown % 360f) + 360f) % 360f
+    val bearing = if (trueNorth) ((magneticBearing + declination) % 360f + 360f) % 360f else magneticBearing
     Instrument(
         title = "Compass",
         onBack = onBack,
@@ -87,11 +96,15 @@ fun CompassScreen(onBack: () -> Unit) {
             rotation == null -> "waiting for the compass"
             field?.unreliable == true -> "swing the phone through a figure of eight to calibrate"
             metal -> "hold the back of the phone flat against the wall and sweep"
+            trueNorth && declination == 0f -> "Set your declination in settings. NOAA or your map's margin gives it."
+            trueNorth -> "true north"
             else -> "magnetic north, not true north"
         },
         actions = {
             Action("Hold", latched = held != null) { held = if (held == null) continuous else null }
             Action("Metal", latched = metal) { metal = !metal }
+            Action("True", latched = trueNorth) { trueNorth = !trueNorth }
+            Action("Declination", latched = settingDeclination) { settingDeclination = !settingDeclination }
         },
     ) {
         Rose(
@@ -114,6 +127,16 @@ fun CompassScreen(onBack: () -> Unit) {
                     style = Type.readingSmall,
                 )
             }
+        }
+        if (settingDeclination) {
+            Adjuster(
+                value = declination,
+                range = -90f..90f,
+                label = "declination",
+                display = String.format(Locale.US, "%+.1f°", declination),
+                onChange = { declination = it },
+                onReset = { declination = 0f },
+            )
         }
     }
 }
