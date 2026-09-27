@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.sp
+import dev.kaleve.nonius.VolumeKeys
 import dev.kaleve.nonius.data.rememberSetting
 import dev.kaleve.nonius.ui.Action
 import dev.kaleve.nonius.ui.Instrument
@@ -25,12 +27,29 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun TallyScreen(onBack: () -> Unit) {
-    // ponytail: no counting by volume key. The keys reach the Activity, not a
-    // composable, so it needs a wire through MainActivity for this one tool.
-    // Add it if counting without looking turns out to matter.
     var count by rememberSetting("tally.count", 0)
     var armed by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
+
+    // Claim the volume keys for exactly as long as this screen is up; every
+    // other screen leaves MainActivity's handlers null and the keys change
+    // the volume as normal.
+    DisposableEffect(Unit) {
+        VolumeKeys.onUp = {
+            count++
+            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+        VolumeKeys.onDown = {
+            if (count > 0) {
+                count--
+                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            }
+        }
+        onDispose {
+            VolumeKeys.onUp = null
+            VolumeKeys.onDown = null
+        }
+    }
 
     // A reset that happens on one tap is a reset that happens by accident.
     LaunchedEffect(armed) {
@@ -43,7 +62,7 @@ fun TallyScreen(onBack: () -> Unit) {
     Instrument(
         title = "Counter",
         onBack = onBack,
-        footnote = "Tap anywhere to count. The number survives being closed.",
+        footnote = "Tap anywhere, or use the volume keys, to count. The number survives being closed.",
         actions = {
             Action("Minus") {
                 if (count > 0) {

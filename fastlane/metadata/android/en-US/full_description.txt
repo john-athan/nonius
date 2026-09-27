@@ -9,7 +9,7 @@ Nonius is the other kind. Every face is drawn as an instrument rather than assem
 • <b>Ruler</b>, millimetres and inches, calibrated against a bank card rather than against the pixel density the panel claims
 • <b>Sound level</b>, in dB(A) or dB(Z), with peak and minimum hold, asking the device for the unprocessed microphone so that gain control cannot rewrite the number
 • <b>Tuner</b>, note and cents by YIN pitch detection, concert pitch adjustable from 415 to 466 Hz
-• <b>Counter</b>, a tally you tap anywhere to raise, which survives closing the app
+• <b>Counter</b>, a tally you tap anywhere or raise with the volume keys, which survives closing the app
 • <b>Altimeter</b>, height above a mark you set, exact enough to measure a staircase, with the pressure trend
 • <b>Light meter</b>, lux across six decades, from moonlight to direct sun
 • <b>Metronome</b>, BPM 30 to 250 and beats per bar 1 to 12 with the first beat accented, sample-accurate clicks

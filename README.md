@@ -30,7 +30,7 @@ metronome's tempo and beats per bar.
 | Ruler | millimetres, inches | none | calibrated against a bank card, not against the panel's own claim |
 | Sound level | dB(A) or dB(Z) | microphone | A-weighted by default, Z for the unweighted reading; peak and minimum hold; asks for the unprocessed source so gain control cannot rewrite the number; calibrate the offset at 1 kHz or with broadband noise, since it holds for either weighting |
 | Tuner | pitch and cents | microphone | YIN detection, concert pitch adjustable from 415 to 466 Hz |
-| Counter | a tally | none | tap anywhere, survives being closed |
+| Counter | a tally | none | tap anywhere or use the volume keys, survives being closed |
 | Altimeter | height and weather | barometer | height above a mark you set, which is exact enough to measure a staircase |
 | Light meter | lux | light sensor | six decades, from moonlight to direct sun |
 | Metronome | beat and tempo | none | BPM 30 to 250, beats per bar 1 to 12 with beat one accented, sample-accurate clicks from an AudioTrack fed by a running sample counter rather than a timer |
