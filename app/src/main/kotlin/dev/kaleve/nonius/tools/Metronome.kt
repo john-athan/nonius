@@ -192,6 +192,7 @@ fun MetronomeScreen(onBack: () -> Unit) {
             )
         }
         if (setting) {
+            Spacer(Modifier.height(28.dp))
             Adjuster(
                 value = bpm,
                 range = BPM_RANGE,
