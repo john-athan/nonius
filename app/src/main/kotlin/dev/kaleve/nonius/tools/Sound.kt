@@ -72,7 +72,14 @@ fun SoundScreen(onBack: () -> Unit) {
         },
         actions = {
             if (microphone.granted) {
-                Action(unit, latched = weighted) { weighted = !weighted }
+                // A held peak from one weighting next to a live reading in the
+                // other would compare two different scales, so a switch starts
+                // the holds and the trace over.
+                Action(unit, latched = weighted) {
+                    weighted = !weighted
+                    hold.reset(System.currentTimeMillis())
+                    trace = FloatArray(0)
+                }
                 Action("Calibrate", latched = calibrating) { calibrating = !calibrating }
                 Action("Reset hold") {
                     hold.reset(System.currentTimeMillis())

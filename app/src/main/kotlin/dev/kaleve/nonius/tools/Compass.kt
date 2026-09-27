@@ -96,7 +96,7 @@ fun CompassScreen(onBack: () -> Unit) {
             rotation == null -> "waiting for the compass"
             field?.unreliable == true -> "swing the phone through a figure of eight to calibrate"
             metal -> "hold the back of the phone flat against the wall and sweep"
-            trueNorth && declination == 0f -> "Set your declination in settings. NOAA or your map's margin gives it."
+            trueNorth && declination == 0f -> "Set your declination under Declination. NOAA or your map's margin gives it."
             trueNorth -> "true north"
             else -> "magnetic north, not true north"
         },
