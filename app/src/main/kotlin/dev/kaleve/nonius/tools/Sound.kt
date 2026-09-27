@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kaleve.nonius.core.AWeighting
 import dev.kaleve.nonius.core.DEFAULT_SPL_OFFSET_DB
+import dev.kaleve.nonius.core.HoldTracker
 import dev.kaleve.nonius.core.rms
 import dev.kaleve.nonius.core.soundPressureLevel
 import dev.kaleve.nonius.data.rememberSetting
@@ -31,7 +31,6 @@ import dev.kaleve.nonius.ui.Reading
 import dev.kaleve.nonius.ui.Trace
 import dev.kaleve.nonius.ui.Type
 import java.util.Locale
-import kotlin.math.max
 
 private const val TRACE_LENGTH = 160
 
@@ -45,8 +44,9 @@ fun SoundScreen(onBack: () -> Unit) {
     // Kept running regardless of the toggle, so switching from Z to A never
     // shows the settling transient of a filter that has been sitting idle.
     val filter = remember { AWeighting(SAMPLE_RATE) }
-    var peak by remember { mutableFloatStateOf(0f) }
+    val hold = remember { HoldTracker() }
     var trace by remember { mutableStateOf(FloatArray(0)) }
+    LaunchedEffect(Unit) { hold.reset(System.currentTimeMillis()) }
 
     val level = frame?.let {
         val aWeighted = rms(FloatArray(it.samples.size) { i -> filter.process(it.samples[i]) })
@@ -54,7 +54,7 @@ fun SoundScreen(onBack: () -> Unit) {
     }
     LaunchedEffect(frame) {
         val reading = level ?: return@LaunchedEffect
-        peak = max(peak, reading)
+        hold.update(reading, System.currentTimeMillis())
         val kept = if (trace.size >= TRACE_LENGTH) trace.copyOfRange(1, trace.size) else trace
         trace = kept + reading
     }
@@ -74,7 +74,10 @@ fun SoundScreen(onBack: () -> Unit) {
             if (microphone.granted) {
                 Action(unit, latched = weighted) { weighted = !weighted }
                 Action("Calibrate", latched = calibrating) { calibrating = !calibrating }
-                Action("Reset peak") { peak = 0f; trace = FloatArray(0) }
+                Action("Reset hold") {
+                    hold.reset(System.currentTimeMillis())
+                    trace = FloatArray(0)
+                }
             } else {
                 Action("Allow microphone") { microphone.ask() }
             }
@@ -97,8 +100,12 @@ fun SoundScreen(onBack: () -> Unit) {
                 unit, "now",
             )
             Reading(
-                if (peak > 0f) String.format(Locale.US, "%.1f", peak) else "--",
+                if (hold.peak > 0f) String.format(Locale.US, "%.1f", hold.peak) else "--",
                 unit, "peak", style = Type.readingSmall,
+            )
+            Reading(
+                if (!hold.minimum.isNaN()) String.format(Locale.US, "%.1f", hold.minimum) else "--",
+                unit, "min", style = Type.readingSmall,
             )
         }
         Trace(

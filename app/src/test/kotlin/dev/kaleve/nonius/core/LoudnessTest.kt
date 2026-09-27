@@ -92,4 +92,22 @@ class LoudnessTest {
             )
         }
     }
+
+    @Test fun `the minimum ignores the first half second`() {
+        val hold = HoldTracker()
+        hold.reset(0L)
+        hold.update(20f, 100L)
+        assertTrue("a settling dip inside the first half second must not stick", hold.minimum.isNaN())
+        hold.update(80f, 600L)
+        assertEquals(80f, hold.minimum, 0f)
+        hold.update(60f, 700L)
+        assertEquals(60f, hold.minimum, 0f)
+    }
+
+    @Test fun `peak hold is not held back by the settling window`() {
+        val hold = HoldTracker()
+        hold.reset(0L)
+        hold.update(90f, 100L)
+        assertEquals(90f, hold.peak, 0f)
+    }
 }

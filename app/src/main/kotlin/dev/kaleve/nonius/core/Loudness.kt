@@ -4,6 +4,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.log10
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -105,4 +106,35 @@ class AWeighting(sampleRate: Int) {
 
     fun process(sample: Float): Float =
         (gain * mid.process(high.process(low.process(sample.toDouble())))).toFloat()
+}
+
+/**
+ * Peak and minimum across a run of readings, reset together. The minimum
+ * ignores the first half second after a reset: a filter that has just started
+ * or just been reset has not settled, and would otherwise pin the minimum at
+ * whatever low, meaningless value comes out before it does.
+ */
+class HoldTracker {
+    private var since = 0L
+    var peak: Float = 0f
+        private set
+    var minimum: Float = Float.NaN
+        private set
+
+    fun reset(atMillis: Long) {
+        since = atMillis
+        peak = 0f
+        minimum = Float.NaN
+    }
+
+    fun update(value: Float, atMillis: Long) {
+        peak = max(peak, value)
+        if (atMillis - since >= SETTLE_MS) {
+            minimum = if (minimum.isNaN()) value else min(minimum, value)
+        }
+    }
+
+    private companion object {
+        const val SETTLE_MS = 500L
+    }
 }
