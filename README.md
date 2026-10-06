@@ -42,8 +42,9 @@ reason, rather than opening and then apologising.
 ## Why it is small
 
 No dependency injection framework, no navigation library, no HTTP client, no
-image loader, no font file, no database. Compose, the activity, and the
-lifecycle bridge for collecting sensor flows. That is the whole dependency list,
+image loader, no font file, no database. Compose, the activity, the
+lifecycle bridge for collecting sensor flows, and coroutines. That is the whole
+dependency list,
 and the release APK is about 1.5 MiB.
 
 ## Screenshots
@@ -79,7 +80,7 @@ tools/check.sh
 app/src/main/kotlin/dev/kaleve/nonius/
   core/       the arithmetic, plain Kotlin, no Android import, unit tested
   sensor/     sensors and the microphone as flows
-  data/       six settings on SharedPreferences
+  data/       float, int and boolean settings on SharedPreferences
   ui/         palette, type, the kit every instrument is drawn from
   tools/      one file per instrument
   Tools.kt    the registry: an eleventh instrument is a file and a line here
