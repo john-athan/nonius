@@ -39,6 +39,9 @@ metronome's tempo and beats per bar.
 Tools whose sensor the device does not have are shown greyed out with the
 reason, rather than opening and then apologising.
 
+It runs on Android 16 or newer. The minimum SDK is 36, so an older phone will
+not be offered the install at all.
+
 ## Why it is small
 
 No dependency injection framework, no navigation library, no HTTP client, no
