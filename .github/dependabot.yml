@@ -16,16 +16,6 @@ updates:
     multi-ecosystem-group: "all-updates"
     patterns:
       - "*"
-    ignore:
-      # Held deliberately, not out of laziness. These versions refuse to build
-      # against anything below compileSdk 37, and android-37 is not published in
-      # the stable SDK channel yet. A bump here fails with "requires libraries
-      # and applications that depend on it to compile against version 37 or
-      # later". Lift both the day compileSdk 37 exists, together.
-      - dependency-name: "androidx.compose:compose-bom"
-        versions: [">=2026.08.00"]
-      - dependency-name: "androidx.lifecycle:lifecycle-runtime-compose"
-        versions: [">=2.11.0"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

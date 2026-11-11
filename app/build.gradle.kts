@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace  = "dev.kaleve.nonius"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.kaleve.nonius"
@@ -44,14 +44,14 @@ android {
 }
 
 dependencies {
-    val bom = platform("androidx.compose:compose-bom:2026.06.01")
+    val bom = platform("androidx.compose:compose-bom:2026.09.00")
     implementation(bom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.animation:animation")
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     // Used directly by sensor/ and data/, so it is declared rather than taken
     // on loan from lifecycle. This is the version the graph already resolved,
     // so declaring it changes nothing in the APK except the honesty.

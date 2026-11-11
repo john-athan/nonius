@@ -62,7 +62,7 @@ and the release APK is about 1.5 MiB.
 
 ## Building
 
-Requirements: JDK 21, Android SDK 36, Gradle (wrapper included).
+Requirements: JDK 21, Android SDK 37 to compile against (the app itself targets 36), Gradle (wrapper included).
 
 ```bash
 git clone https://github.com/john-athan/nonius
