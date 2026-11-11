@@ -15,6 +15,7 @@ android {
         targetSdk     = 36
         versionCode   = 6
         versionName   = "1.4"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -60,6 +61,10 @@ dependencies {
     // Everything under core/ is plain Kotlin: no Android import, no device, no
     // Robolectric. That is where the arithmetic of every instrument lives.
     testImplementation("junit:junit:4.13.2")
+    androidTestImplementation(bom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
 kotlin {

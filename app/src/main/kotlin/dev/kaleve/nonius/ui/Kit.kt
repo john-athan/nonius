@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -222,6 +223,8 @@ fun Adjuster(
     onReset: (() -> Unit)? = null,
 ) {
     val span = range.endInclusive - range.start
+    val currentValue by rememberUpdatedState(value)
+    val currentOnChange by rememberUpdatedState(onChange)
     val ruleColour = palette.rule2
     val signalColour = palette.signal
     Column(Modifier.fillMaxWidth()) {
@@ -238,10 +241,16 @@ fun Adjuster(
             Modifier
                 .fillMaxWidth()
                 .height(34.dp)
-                .pointerInput(range, value) {
-                    detectHorizontalDragGestures { _, delta ->
+                .pointerInput(range) {
+                    // Updating the value must not cancel the drag. Keep the
+                    // unrounded total so integer-valued callers retain small moves.
+                    var draggedValue = 0f
+                    detectHorizontalDragGestures(
+                        onDragStart = { draggedValue = currentValue },
+                    ) { _, delta ->
                         val step = delta / size.width * span * 0.2f
-                        onChange((value + step).coerceIn(range.start, range.endInclusive))
+                        draggedValue = (draggedValue + step).coerceIn(range.start, range.endInclusive)
+                        currentOnChange(draggedValue)
                     }
                 }
         ) {
