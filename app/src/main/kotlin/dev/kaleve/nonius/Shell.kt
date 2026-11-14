@@ -30,12 +30,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import dev.kaleve.nonius.ui.Body
 import dev.kaleve.nonius.ui.Micro
 import dev.kaleve.nonius.ui.Rule
 import dev.kaleve.nonius.ui.ToolGlyph
@@ -102,26 +100,19 @@ fun Nonius() {
 
 @Composable
 private fun Case(tools: List<Tool>, onLicences: () -> Unit, onOpen: (Tool) -> Unit) {
-    val context = LocalContext.current
     Column(
         Modifier
             .fillMaxSize()
             .background(palette.paper)
             .safeDrawingPadding()
-            .padding(horizontal = 20.dp),
+            .padding(start = 20.dp, end = 20.dp, bottom = 22.dp),
     ) {
-        Row(
-            Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            BasicText("Nonius", style = Type.wordmark.copy(color = palette.ink))
-            Micro("no network", Modifier.padding(bottom = 4.dp))
-        }
-        Body(
-            "${tools.count { it.needs.metBy(context) }} instruments, offline",
-            Modifier.padding(bottom = 16.dp),
-            palette.ink3,
+        // The licences have to travel with the app, not sit on its face: the
+        // wordmark opens them.
+        BasicText(
+            "Nonius",
+            Modifier.padding(top = 18.dp, bottom = 16.dp).press(onClick = onLicences),
+            Type.wordmark.copy(color = palette.ink),
         )
         Rule(color = palette.rule2)
         // The grid is the screen. Rows share the height that is left, so the
@@ -136,13 +127,6 @@ private fun Case(tools: List<Tool>, onLicences: () -> Unit, onOpen: (Tool) -> Un
                 }
                 Rule()
             }
-        }
-        Row(
-            Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 22.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Micro("GPL-3.0 or later")
-            Box(Modifier.press(onClick = onLicences)) { Micro("licences", color = palette.ink2) }
         }
     }
 }

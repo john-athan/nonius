@@ -96,4 +96,4 @@ decibel arithmetic have tests and the drawing does not.
 ## Licence
 
 GPL-3.0-or-later, full text in `LICENSE`. The libraries inside the APK are all
-Apache-2.0 and their notice is readable offline in the app under Licences.
+Apache-2.0 and their notice is readable offline in the app: tap the Nonius title.
