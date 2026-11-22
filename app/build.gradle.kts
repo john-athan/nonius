@@ -13,8 +13,8 @@ android {
         // Android 16, so there are no version guards anywhere in the source.
         minSdk        = 36
         targetSdk     = 36
-        versionCode   = 8
-        versionName   = "1.6"
+        versionCode   = 9
+        versionName   = "1.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
