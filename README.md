@@ -1,7 +1,12 @@
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/icon.png" width="96" alt="Nonius icon">
+</p>
+
 # Nonius
 
-Ten measuring instruments Android does not ship with, in one app of about a
-megabyte and a half, with no network permission at all.
+**Ten measuring instruments Android does not ship with, in one app of about a megabyte and a half, with no network permission at all.**
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/dev.kaleve.nonius)
 
 No ads. No trackers. No analytics. One permission, the microphone, asked for
 when you open the sound level meter or the tuner and never before.
