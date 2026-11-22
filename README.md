@@ -74,7 +74,7 @@ cd nonius
 Checks, the same ones CI runs:
 
 ```bash
-tools/check.sh
+tools/validate.sh
 ```
 
 ## Layout

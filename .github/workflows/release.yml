@@ -1,10 +1,20 @@
 name: Release
 
-# F-Droid rebuilds this APK from the tagged source and compares it byte for byte
-# against the file attached here. If the two differ, F-Droid cannot ship the
-# upstream signature and the app silently stops updating there. So this job
-# builds exactly the way ci.yml does, JDK 21 Temurin and the Gradle wrapper from
-# the repo, because that combination is the one that was verified to reproduce.
+# This job builds the release APK the way F-Droid does, JDK 21 Temurin and the
+# Gradle wrapper from the repo, and prints its checksum, so a drifting build
+# environment shows up here before it shows up in an F-Droid build.
+#
+# Whether the APK is also signed here is the upstream_signing var of this
+# project in oss-kit's fleet.json. Without it there is no signing step: F-Droid
+# builds from the tag and signs with its own key (its metadata has no Binaries
+# line and no AllowedAPKSigningKeys), and a self-signed APK attached here would
+# only create a second identity for the app.
+#
+# With it, F-Droid rebuilds this APK from the tagged source and compares it byte
+# for byte against the file attached here. If the two differ, F-Droid cannot
+# ship the upstream signature and the app silently stops updating there. So the
+# build has to be exactly the one ci.yml does, because that combination is the
+# one that was verified to reproduce.
 
 on:
   push:
@@ -12,11 +22,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   apk:
-    name: Build, sign and attach the APK
+    name: Release APK
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
